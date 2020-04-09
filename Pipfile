@@ -1,0 +1,19 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+autopep8 = "*"
+
+[packages]
+pyjwt = "*"
+flask-login = "*"
+flask-cors = "*"
+flask-socketio = "*"
+flask-jwt-extended = "*"
+flask = "*"
+b4a700d = {file = "https://github.com/eventlet/eventlet/archive/master.zip"}
+
+[requires]
+python_version = "3.7"
