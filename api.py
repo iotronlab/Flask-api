@@ -9,9 +9,9 @@ from flask_socketio import SocketIO, emit, send
 
 app = Flask(__name__)
 
-CORS(app)
-
 app.config.from_pyfile('dbconfig.py')
+
+cors = CORS(app)
 
 db = SQLAlchemy(app)
 

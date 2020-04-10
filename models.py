@@ -16,13 +16,13 @@ class Users(db.Model):
     # one-to-many relationship
     owned_devices = db.relationship('Devices', backref='owner')
     # many-to-many relationship
-    user_devices = db.relationship(
+    shared_devices = db.relationship(
         'Devices', secondary=subs, backref=db.backref('subscribers', lazy='dynamic'))
 
 
 class Rooms(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    name = db.Column(db.String(50))
+    name = db.Column(db.String(50), unique=True)
     # one-to-many relationship
     room_devices = db.relationship('Devices', backref='room')
 

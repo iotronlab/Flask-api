@@ -1,4 +1,4 @@
-from api import app, db, jwt, jsonify, request, make_response
+from api import app, db, jwt, jsonify, request, make_response, cors
 from flask_jwt_extended import (
     jwt_required, create_access_token,
     get_jwt_identity, get_raw_jwt
@@ -69,8 +69,8 @@ def get_user():
     user_data = {}
     user_data['name'] = user.name
     user_data['email'] = user.email
-    user_data['mydevices'] = user.owned_devices
-    user_data['shareddevices'] = user.user_devices
+    #user_data['mydevices'] = user.owned_devices
+    #user_data['shareddevices'] = user.user_devices
 
     return jsonify({'data': user_data}), 200
 
