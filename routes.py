@@ -19,26 +19,61 @@ def get_devices():
     if not user:
         return jsonify({'message': 'User not Found'}), 404
     devices = user.owned_devices
-    shares = user.shared_devices
-    if not devices and not shares:
+    shared = user.shared_devices
+    if not devices and not shared:
         return jsonify({'message': 'No devices found'}), 404
     output = []
-    shared = []
+    shareddevice = []
     rooms = []
     for device in devices:
         device_data = {}
+        room_data = {}
         device_data['id'] = device.id
         device_data['name'] = device.device_name
         device_data['status'] = device.status
         device_data['room'] = device.room_id
         output.append(device_data)
-        room = Rooms.query.filter_by(id=device.room_id).first()
-        room_data = {}
-        room_data['id'] = room.id
-        room_data['name'] = room.name
-        rooms.append(room_data)
+        room = device.room
 
-    return jsonify({'devices': output, 'rooms': rooms})
+        if (len(rooms) < 1):
+            room_data['id'] = room.id
+            room_data['name'] = room.name
+            rooms.append(room_data)
+        else:
+            present = False
+            for item in rooms:
+                if item['id'] == room.id:
+                    present = True
+            if present == False:
+                room_data['id'] = room.id
+                room_data['name'] = room.name
+                rooms.append(room_data)
+
+    for device in shared:
+        device_data = {}
+        room_data = {}
+        device_data['id'] = device.id
+        device_data['name'] = device.device_name
+        device_data['status'] = device.status
+        device_data['room'] = device.room_id
+        shareddevice.append(device_data)
+        room = device.room
+
+        if (len(rooms) < 1):
+            room_data['id'] = room.id
+            room_data['name'] = room.name
+            rooms.append(room_data)
+        else:
+            present = False
+            for item in rooms:
+                if item['id'] == room.id:
+                    present = True
+            if present == False:
+                room_data['id'] = room.id
+                room_data['name'] = room.name
+                rooms.append(room_data)
+
+    return jsonify({'devices': output, 'rooms': rooms, 'shared': shareddevice}), 200
 
 
 @app.route('/devices/<id>', methods=['GET'])
@@ -95,14 +130,21 @@ def add_devices():
         device_name=data['name'], status=False, room_id=room.id, owner_id=user.id)
     db.session.add(new_device)
     db.session.commit()
-    return jsonify({'message': 'success'})
+    return jsonify({'message': 'successfully added'}), 200
 
 
-@app.route('/devices/<id>', methods=['PUT'])
-def update_device(id):
-    device = Devices.query.filter_by(id=id).first()
+@app.route('/devices/update', methods=['PATCH'])
+def update_device():
+    data = request.get_json()
+    device = Devices.query.filter_by(id=data['id']).first()
     if not device:
         return jsonify({'message': 'No Device Found'})
+    device.status = data['status']
+    db.session.add(device)
+    db.session.commit()
+    device_data = {}
+    device_data['id'] = device.id
+    device_data['name'] = device.device_name
+    device_data['status'] = device.status
 
-    # device.status = !device.status
-    return jsonify(device)
+    return jsonify(device_data), 200

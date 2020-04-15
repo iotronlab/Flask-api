@@ -69,8 +69,6 @@ def get_user():
     user_data = {}
     user_data['name'] = user.name
     user_data['email'] = user.email
-    #user_data['mydevices'] = user.owned_devices
-    #user_data['shareddevices'] = user.user_devices
 
     return jsonify({'data': user_data}), 200
 
