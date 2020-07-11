@@ -25,9 +25,10 @@ from websocket import *
 from routes import *
 from models import *
 from auth import *
+from milight import *
 
 
 if __name__ == '__main__':
-    #app.run(debug=True)
+    app.run(debug=True)
     socketio.run(app, debug=True)
 

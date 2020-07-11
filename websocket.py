@@ -6,13 +6,19 @@ from models import *
 def handleMessage(message):
     print('received msg:' + message)
 
+    
+@socketio.on('connectdevice')
+def handleMessage():
+    send('received msg')
+
+
 
 @socketio.on('update')
-def handleJSON(json):
+def handle_json(json):
     data = json['data']
     device = Devices.query.filter_by(id=data['id']).first()
     if not device:
-        return jsonify({'message': 'No Device Found'})
+        socketio.send('Device not found')
     device.status = data['status']
     db.session.add(device)
     db.session.commit()
@@ -20,5 +26,5 @@ def handleJSON(json):
     device_data['id'] = device.id
     device_data['name'] = device.device_name
     device_data['status'] = device.status
-    send(device_data, broadcast=True)
+    socketio.emit('updatedDevice', {'device':device_data}, broadcast=True)
     print(device_data)

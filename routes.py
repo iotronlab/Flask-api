@@ -1,4 +1,4 @@
-from api import app, jsonify, request, make_response
+from api import app, jsonify, request, make_response, socketio, emit
 from functools import wraps
 from flask_jwt_extended import (jwt_required, get_jwt_identity)
 import datetime
@@ -134,6 +134,7 @@ def add_devices():
 
 
 @app.route('/devices/update', methods=['PATCH'])
+@jwt_required
 def update_device():
     data = request.get_json()
     device = Devices.query.filter_by(id=data['id']).first()
@@ -146,5 +147,5 @@ def update_device():
     device_data['id'] = device.id
     device_data['name'] = device.device_name
     device_data['status'] = device.status
-
+    socketio.emit('socketUpdate', {'data': device_data}, broadcast=True), 200
     return jsonify(device_data), 200
